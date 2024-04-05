@@ -3,32 +3,32 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"lunarisnia/go-build-tags-experiment/internal/defaults"
 	"lunarisnia/go-build-tags-experiment/internal/interfaces"
-	"lunarisnia/go-build-tags-experiment/internal/user_fetchers"
 	"net/http"
 )
 
-// TODO: Find out how to call this dynamically
-func initiateRequest[ST interfaces.BasicHandler[ST]](s ST) {
-	s.GetRequestStruct()
+var handler interfaces.BasicHandler
+
+func init() {
+	handler = defaults.DefaultHandler{}
 }
 
 func main() {
 	r := gin.Default()
-
 	r.POST("/execute", func(c *gin.Context) {
-		userFetchers := user_fetchers.UserFetchers{}
+		requestBody := handler.GetRequestBody(c)
+		executor := handler.GetExecutor()
 
-		var destStruct any
-		destStruct, err := userFetchers.GetRequestStruct()
+		responseBody, err := executor.JSONExecute(requestBody)
 		if err != nil {
 			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
 		}
-		fmt.Println("Hello: ", destStruct)
-
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
+		c.JSON(http.StatusOK, responseBody)
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

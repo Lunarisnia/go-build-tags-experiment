@@ -1,21 +1,31 @@
 package user_fetchers
 
 import (
-	"fmt"
+	"github.com/gin-gonic/gin"
+	"lunarisnia/go-build-tags-experiment/internal/interfaces"
 )
 
-type UserFetchers struct {
-}
-
-type UserFetchersRequestStruct struct {
+type UserFetcher struct {
 	Foo string `json:"foo"`
 }
 
-func (u UserFetchers) GetRequestStruct() (UserFetchersRequestStruct, error) {
-	fmt.Println("Run")
-	us := UserFetchersRequestStruct{
+func (u UserFetcher) GetExecutor() interfaces.BasicExecutor {
+	return A{}
+}
+
+func (u UserFetcher) GetRequestBody(ctx *gin.Context) interface{} {
+	us := UserFetcher{
 		Foo: "ADasdasd",
 	}
 
-	return us, nil
+	return us
+}
+
+type A struct {
+}
+
+func (a A) JSONExecute(requestBody interface{}) gin.H {
+	return gin.H{
+		"foo": "bar",
+	}
 }

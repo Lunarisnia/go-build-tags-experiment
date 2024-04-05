@@ -1,5 +1,8 @@
 package interfaces
 
-type BasicHandler[ST any] interface {
-	GetRequestStruct() (ST, error)
+import "github.com/gin-gonic/gin"
+
+type BasicHandler interface {
+	GetRequestBody(ctx *gin.Context) interface{}
+	GetExecutor() BasicExecutor
 }
