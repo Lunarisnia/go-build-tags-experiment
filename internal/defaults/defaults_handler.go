@@ -8,10 +8,10 @@ import (
 
 type DefaultHandler struct{}
 
-func (DefaultHandler) GetRequestBody(ctx *gin.Context) interface{} {
+func (DefaultHandler) GetRequestBody(ctx *gin.Context) (interface{}, error) {
 	return defaultstructs.DefaultRequestBody{
 		Message: "pong",
-	}
+	}, nil
 }
 
 func (DefaultHandler) GetExecutor() interfaces.BasicExecutor {

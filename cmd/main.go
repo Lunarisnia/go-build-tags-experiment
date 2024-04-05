@@ -17,7 +17,14 @@ func init() {
 func main() {
 	r := gin.Default()
 	r.POST("/execute", func(c *gin.Context) {
-		requestBody := handler.GetRequestBody(c)
+		requestBody, err := handler.GetRequestBody(c)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 		executor := handler.GetExecutor()
 
 		responseBody, err := executor.JSONExecute(requestBody)
